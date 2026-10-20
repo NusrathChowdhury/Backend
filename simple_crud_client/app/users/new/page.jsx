@@ -9,12 +9,45 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { redirect } from 'next/navigation';
 
 
 const NewUserPage = () => {
-const handleAddNewUser=e =>{
-    e.preventDefault()
-}
+
+
+
+
+
+
+
+
+    const handleAddNewUser = async (e) => {
+        e.preventDefault()
+        const fromData = new FormData(e.currentTarget);
+        const newUser = Object.fromEntries(fromData.entries())
+
+        console.log(newUser)
+
+
+        const res = await fetch("http://localhost:5000/users", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newUser),
+        });
+
+        console.log('rsponse from server', res)
+
+        const afterSubmit=await res.json()
+
+        if(afterSubmit.insertedId){
+            console.log('User added Successfully')
+            redirect('/users')
+
+        }
+    }
+
 
     return (
         <div>
@@ -22,12 +55,12 @@ const handleAddNewUser=e =>{
                 <FieldGroup>
                     <Field>
                         <FieldLabel htmlFor="fieldgroup-name">Name</FieldLabel>
-                        <Input id="fieldgroup-name" placeholder="Jordan Lee" />
+                        <Input id="fieldgroup-name" name='name' placeholder="Jordan Lee" />
                     </Field>
                     <Field>
                         <FieldLabel htmlFor="fieldgroup-email">Email</FieldLabel>
                         <Input
-                            id="fieldgroup-email"
+                            id="fieldgroup-email" name='email'
                             type="email"
                             placeholder="name@example.com"
                         />
@@ -39,7 +72,7 @@ const handleAddNewUser=e =>{
                         <Button type="reset" variant="outline">
                             Reset
                         </Button>
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit">Add User</Button>
                     </Field>
                 </FieldGroup>
             </form>

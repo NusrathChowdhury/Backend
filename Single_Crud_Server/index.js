@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors'
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import 'dotenv/config'
 
 
@@ -28,12 +28,44 @@ export async function connectToMongoDB() {
 }
 
 
-await connectToMongoDB();
-
-
+const connetedCleint=await connectToMongoDB();
+const db = connetedCleint.db('SimpleCardDb');
+const users = db.collection("Users");
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+app.get('/users',async(req,res) =>{
+  const cursor=users.find({})
+  const allUsers=await cursor.toArray()
+  res.send(allUsers)
+})
+
+app.get('/users/:id',async(req,res)=>{
+  console.log('Params in the server',req.params)
+  const id=req.params.id;
+  const query={_id:new ObjectId(id)}
+  const result=await users.findOne(query)
+  res.send(result);
+})
+
+
+app.post('/users', async (req, res) => {
+    const newUser = req.body;
+
+    console.log('new user:', newUser);
+
+    const result = await users.insertOne(newUser);
+
+    res.send(result);
+});
+
+app.delete('/users/:id',async(req,res)=>{
+  const id=req.params.id;
+  const query={_id:new ObjectId(id)}
+  const result=await users.deleteOne(query);
+  res.send(result)
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
