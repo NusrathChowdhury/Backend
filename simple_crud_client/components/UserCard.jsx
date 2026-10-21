@@ -12,6 +12,7 @@ import {
 // import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import UpdataUserDialog from "./UpdataUserDialog";
 const UserCard = ({ user }) => {
 
 
@@ -51,7 +52,7 @@ const UserCard = ({ user }) => {
                 <CardFooter>
                     <Link href={`/users/${user._id}`}>
                         <Button className="w-full">View details </Button></Link>
-                    <Button className='mx-4'>Edit  </Button>
+                    <UpdataUserDialog user={user}> </UpdataUserDialog>
                     <Button
                         onClick={() => handleDeleteUser(_id)}
                         variant='destructive'>Delete  </Button>
